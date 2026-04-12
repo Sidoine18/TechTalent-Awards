@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidats | TechTalent Awards Africa</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(30, 41, 59, 0.7);
+        --primary: #3b82f6;
+        --secondary: #7c3aed;
+        --text-light: #f8fafc;
+        --text-muted: #94a3b8;
+        --accent: #00f0ff;
+        --glass: rgba(255, 255, 255, 0.03);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* --- NAVBAR --- */
+    .navbar {
+        position: fixed; top: 0; width: 100%; z-index: 1000;
+        transition: 0.4s; padding: 20px 0;
+    }
+    .navbar.scrolled { 
+        background: rgba(15, 23, 42, 0.95); 
+        backdrop-filter: blur(15px); 
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1); 
+    }
+    .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+    
+    .logo { font-size: 1.4rem; font-weight: 800; text-decoration: none; color: white; letter-spacing: -1px; z-index: 1001; }
+    .logo span { color: var(--primary); }
+
+    .nav-links { display: flex; list-style: none; gap: 30px; align-items: center; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
+    .nav-links a.active, .nav-links a:hover { color: var(--accent); }
+
+    /* Burger Menu */
+    .menu-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1001; }
+
+    /* --- HERO --- */
+    .hero-mini { 
+        padding: 140px 0 60px; 
+        text-align: center; 
+        background: radial-gradient(circle at 50% -20%, rgba(124, 58, 237, 0.15), transparent); 
+    }
+    h1 { font-size: clamp(1.8rem, 8vw, 3.5rem); margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
+    .text-gradient { 
+        background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+    }
+    .hero-mini p { color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1rem; padding: 0 10px; }
+
+    /* --- CANDIDATES GRID --- */
+    .grid-layout {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin: 40px 0 80px;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.4s ease;
+        opacity: 0; transform: translateY(20px);
+    }
+    .card.visible { opacity: 1; transform: translateY(0); }
+    .card:hover { transform: translateY(-8px); border-color: var(--primary); }
+
+    .card-img-wrapper { width: 100%; height: 260px; overflow: hidden; }
+    .card-img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-body { padding: 20px; }
+    .badge-country { font-size: 0.7rem; background: rgba(59, 130, 246, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 50px; font-weight: 600; }
+    .card-name { font-size: 1.3rem; margin: 10px 0 5px; color: white; }
+    .specialty { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; }
+    
+    .card-footer { 
+        display: flex; justify-content: space-between; align-items: center; 
+        padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .vote-count { font-size: 1.1rem; font-weight: 800; color: white; display: block; }
+    .vote-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+
+    .btn-primary { 
+        background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+        color: white; padding: 10px 20px; border-radius: 10px; 
+        text-decoration: none; font-weight: 600; transition: 0.3s; font-size: 0.9rem;
+    }
+
+    /* --- RESPONSIVE MOBILE --- */
+    @media (max-width: 850px) {
+        .menu-toggle { display: block; }
+        
+        .nav-links {
+            position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
+            background: #0f172a; flex-direction: column; justify-content: center;
+            transition: 0.4s; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+        .nav-links.active { right: 0; }
+        
+        .navbar .btn-primary { display: none; } /* On cache le bouton de la nav sur mobile */
+        
+        .grid-layout { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+    }
+
+    footer { background: #070b14; padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+</style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="logo">TechTalent<span>Awards</span></a>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <ul class="nav-links" id="nav-list">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="candidates.html" class="active">Candidats</a></li>
+            <li><a href="leaderboard.html">Classement</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li class="mobile-only"><a href="leaderboard.html" class="btn-primary" style="margin-top:20px">Voir Classement</a></li>
+        </ul>
+    </div>
+    </nav>
+
+    <header class="hero-mini">
+        <div class="hero-content container">
+            <h1>L'Excellence <span class="text-gradient">Tech Africaine</span></h1>
+            <p>Votez pour vos candidats préférés et propulsez-les vers la victoire finale.</p>
+        </div>
+    </header>
+
+        <div id="candidates-grid" class="grid-layout">
+            </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <a href="#" class="logo">TechTalent<span>Awards</span></a>
+            <div class="footer-socials">
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="container" style="text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+            &copy; 2026 TechTalent Awards Africa. Built with passion for the continent.
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIGURATION (La tienne)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBm_OKWtWEPTdaR_CdDU68VFTQscuTwTDI",
+            authDomain: "techtalent-awards.firebaseapp.com",
+            projectId: "techtalent-awards",
+            storageBucket: "techtalent-awards.firebasestorage.app",
+            messagingSenderId: "750651688130",
+            appId: "1:750651688130:web:a9baea58892b2b278ba75b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const grid = document.getElementById('candidates-grid');
+
+        // Fonction pour charger les candidats
+        async function fetchCandidates() {
+            grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Initialisation du radar de talents...</p>';
+            
+            try {
+                const q = query(collection(db, "candidates"), orderBy("votes", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                grid.innerHTML = ""; // On vide
+
+                querySnapshot.forEach((doc) => {
+                    const candidate = doc.data();
+                    const id = doc.id;
+                    createCard(id, candidate);
+                });
+
+                observeCards(); // Activer l'animation d'entrée
+            } catch (error) {
+                console.error("Erreur:", error);
+                grid.innerHTML = `<p style="color:red; text-align:center; grid-column: 1/-1;">Erreur de connexion à la base de données.</p>`;
+            }
+        }
+
+        // Création dynamique de la carte
+        function createCard(id, data) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <img src="${data.profileImageUrl || 'https://via.placeholder.com/400x500/0f172a/ffffff?text=TechTalent'}" class="card-img" alt="${data.fullName}">
+                </div>
+                <div class="card-body">
+                    <span class="badge-country">📍 ${data.country}</span>
+                    <h3 class="card-name">${data.fullName}</h3>
+                    <p class="specialty">${data.specialty || 'Expert Informatique'}</p>
+                    <div class="card-footer">
+                        <div class="votes-info">
+                            <span class="vote-count">${data.votes || 0}</span>
+                            <span class="vote-label">Votes cumulés</span>
+                        </div>
+                        <a href="candidate.html?id=${id}" class="btn-primary">Voter</a>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+
+        // Animation au scroll (Observer)
+        function observeCards() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 100); // Effet cascade
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.card').forEach(card => observer.observe(card));
+        }
+
+        // Effet Navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // Lancement
+        fetchCandidates();
+
+    </script>
+
+    <script>
+    // Menu Mobile toggle
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-list');
+
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        // Change l'icône bars en times (croix)
+        const icon = menuToggle.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+
+    // Fermer le menu si on clique sur un lien
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+</script>
+</body>
+</html>
