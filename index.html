@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechTalent Awards | Afrique</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --primary: #3b82f6;
+            --secondary: #7c3aed;
+            --accent: #00f0ff;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-light); 
+            line-height: 1.5;
+            overflow-x: hidden; /* Empêche le scroll horizontal */
+        }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* NAVBAR RESPONSIVE */
+        .navbar { 
+            position: fixed; top: 0; width: 100%; z-index: 1000; 
+            padding: 15px 0; background: rgba(7, 11, 20, 0.85); 
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.3rem; font-weight: 800; text-decoration: none; color: white; }
+        .logo span { color: var(--primary); }
+        
+        .nav-links { display: none; } /* Caché sur mobile par défaut */
+
+        /* HERO SECTION */
+        .hero { 
+            min-height: 100vh; 
+            display: flex; align-items: center; justify-content: center; 
+            padding-top: 80px; text-align: center;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1), transparent 80%);
+        }
+        .hero h1 { 
+            font-size: clamp(2rem, 10vw, 4rem); 
+            font-weight: 800; line-height: 1.1; margin-bottom: 20px; 
+        }
+        .text-gradient { 
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+        .hero p { 
+            font-size: clamp(1rem, 4vw, 1.2rem); 
+            color: var(--text-muted); margin-bottom: 35px; max-width: 600px; margin-inline: auto; 
+        }
+
+        /* BOUTONS ADAPTATIFS */
+        .cta-group { 
+            display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto; 
+        }
+        .btn { 
+            padding: 16px 30px; border-radius: 12px; font-weight: 700; text-decoration: none; 
+            text-align: center; transition: 0.3s; border: none; font-size: 1rem;
+        }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-sec { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* STATS BAR */
+        .stats-bar { background: rgba(255,255,255,0.02); padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .stats-grid { 
+            display: grid; grid-template-columns: 1fr; gap: 30px; text-align: center; 
+        }
+        .stat-item h3 { font-size: 2.5rem; color: var(--accent); font-weight: 800; }
+
+        /* TRENDING SECTION */
+        .section { padding: 60px 0; }
+        .trending-grid { 
+            display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; 
+        }
+        .trending-card { 
+            background: #0f172a; border-radius: 15px; padding: 15px; 
+            display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); 
+        }
+        .trending-img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; }
+
+        /* MEDIA QUERIES POUR DESKTOP (TABLETTE ET +) */
+        @media (min-width: 768px) {
+            .nav-links { display: flex; list-style: none; gap: 25px; }
+            .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+            
+            .cta-group { flex-direction: row; max-width: none; justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .trending-grid { grid-template-columns: repeat(3, 1fr); }
+            
+            .logo { font-size: 1.6rem; }
+        }
+
+        /* ANIMATION SIMPLE */
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- SECTION À PROPOS HOME --- */
+.about-home {
+    background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.03));
+}
+
+.about-flex {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile-first */
+    gap: 50px;
+    align-items: center;
+}
+
+.section-subtitle {
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.about-description {
+    color: var(--text-muted);
+    margin: 20px 0;
+    font-size: 1.1rem;
+}
+
+.about-features {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.about-features li {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.about-features i {
+    color: var(--accent);
+}
+
+.btn-text {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 5px;
+    transition: 0.3s;
+}
+
+.btn-text:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* VISUEL À DROITE (BOXES) */
+.about-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.glass-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px 20px;
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.glass-box:hover {
+    background: rgba(59, 130, 246, 0.05);
+    border-color: var(--primary);
+}
+
+.glass-box i {
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glass-box h3 { margin-bottom: 5px; font-size: 1.2rem; }
+.glass-box p { font-size: 0.8rem; color: var(--text-muted); }
+
+/* --- MEDIA QUERY DESKTOP --- */
+@media (min-width: 992px) {
+    .about-flex {
+        grid-template-columns: 1.2fr 0.8fr; /* Texte à gauche, visuel à droite */
+    }
+}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">TechTalent<span>Awards</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="candidates.html">Candidats</a></li>
+                <li><a href="leaderboard.html">Classement</a></li>
+            </ul>
+            <a href="candidates.html" class="btn-main" style="padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; text-decoration:none">Voter</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1 class="reveal">Votez pour le <br><span class="text-gradient">Génie Tech</span> d'Afrique</h1>
+            <p class="reveal">Soutenez les meilleurs talents informatiques du continent et participez à la révolution numérique.</p>
+            <div class="cta-group reveal">
+                <a href="candidates.html" class="btn btn-main">Voir les candidats</a>
+                <a href="leaderboard.html" class="btn btn-sec">Le Classement</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="stats-bar">
+        <div class="container stats-grid">
+            <div class="stat-item">
+                <h3 id="total-votes">0</h3>
+                <p style="color:var(--text-muted); font-size: 0.8rem; letter-spacing: 1px;">VOTES UNITAIRES</p>
+            </div>
+            <div class="stat-item">
+                <h3>30</h3>
+                <p style="color:var(--text-muted); font-size: 0.8rem; letter-spacing: 1px;">TALENTS</p>
+            </div>
+            <div class="stat-item">
+                <h3>LIVE</h3>
+                <p style="color:var(--text-muted); font-size: 0.8rem; letter-spacing: 1px;">CLASSEMENT</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="section container">
+        <h2 style="font-size: 1.5rem; margin-bottom: 25px;">Tendances Actuelles</h2>
+        <div class="trending-grid" id="trending-container">
+            </div>
+    </section>
+
+    <section class="section about-home">
+    <div class="container about-flex">
+        <div class="about-text reveal">
+            <p class="section-subtitle">POURQUOI NOUS LE FAISONS</p>
+            <h2 class="section-title">Propulser l'Excellence <span class="text-gradient">Numérique Africaine</span></h2>
+            <p class="about-description">
+                TechTalent Awards n'est pas qu'un simple concours. C'est un catalyseur de génies. Nous identifions les développeurs et innovateurs les plus brillants du continent pour leur offrir la visibilité et le soutien qu'ils méritent.
+            </p>
+            <ul class="about-features">
+                <li><i class="fas fa-check-circle"></i> Votes 100% sécurisés via FedaPay</li>
+                <li><i class="fas fa-check-circle"></i> Transparence totale du classement</li>
+                <li><i class="fas fa-check-circle"></i> Impact direct sur la carrière des talents</li>
+            </ul>
+            <a href="about.html" class="btn-text">En savoir plus sur notre mission →</a>
+        </div>
+        
+        <div class="about-visual reveal">
+            <div class="glass-box">
+                <i class="fas fa-rocket fa-3x"></i>
+                <h3>+30 pays</h3>
+                <p>Connectés par l'innovation</p>
+            </div>
+            <div class="glass-box">
+                <i class="fas fa-shield-alt fa-3x"></i>
+                <h3>Intégrité</h3>
+                <p>Système de vote certifié</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <footer style="padding: 40px 0; text-align: center; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05);">
+        <p>&copy; 2026 TechTalent Awards Africa</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBm_OKWtWEPTdaR_CdDU68VFTQscuTwTDI",
+            authDomain: "techtalent-awards.firebaseapp.com",
+            projectId: "techtalent-awards",
+            storageBucket: "techtalent-awards.firebasestorage.app",
+            messagingSenderId: "750651688130",
+            appId: "1:750651688130:web:a9baea58892b2b278ba75b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function initApp() {
+            const q = query(collection(db, "candidates"), orderBy("votes", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                let total = 0;
+                const container = document.getElementById('trending-container');
+                container.innerHTML = '';
+                
+                snapshot.docs.forEach((doc, index) => {
+                    const data = doc.data();
+                    total += (data.votes || 0);
+                    
+                    if(index < 3) {
+                        container.innerHTML += `
+                            <div class="trending-card">
+                                <img src="${data.profileImageUrl}" class="trending-img">
+                                <div>
+                                    <h4 style="font-size:0.9rem">${data.fullName}</h4>
+                                    <p style="font-size:0.8rem; color:var(--accent)">${data.votes} votes</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                document.getElementById('total-votes').innerText = total;
+            });
+
+            // Animation Reveal simple
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }, 100);
+        }
+
+        initApp();
+    </script>
+</body>
+</html>

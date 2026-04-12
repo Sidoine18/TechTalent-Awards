@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Candidat | TechTalent Awards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --bg-card: #0f172a;
+            --primary: #3b82f6;
+            --secondary: #7c3aed;
+            --accent: #00f0ff;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-light); line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- NAVIGATION --- */
+        .navbar { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(7, 11, 20, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 800; text-decoration: none; color: white; }
+        .logo span { color: var(--primary); }
+        .back-btn { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .back-btn:hover { color: white; }
+
+        /* --- LAYOUT --- */
+        .profile-wrapper { display: grid; grid-template-columns: 1fr 380px; gap: 40px; padding: 60px 0; }
+
+        /* --- LEFT COLUMN --- */
+        .candidate-header { margin-bottom: 40px; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 20px; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; }
+        .badge-specialty { background: rgba(124, 58, 237, 0.2); color: #c084fc; padding: 6px 15px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; }
+        
+        .section-title { font-size: 1.2rem; margin: 40px 0 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .content-box { background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; margin-top: 20px; }
+
+        /* --- RIGHT COLUMN: VOTE BOX --- */
+        .vote-card { 
+            background: linear-gradient(145deg, #1e293b, #0f172a); 
+            padding: 30px; border-radius: 24px; border: 1px solid var(--primary);
+            position: sticky; top: 100px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .vote-count-big { font-size: 3rem; font-weight: 800; color: white; line-height: 1; }
+        .vote-label { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
+
+        .price-options { display: grid; gap: 12px; margin-bottom: 25px; }
+        .price-btn { 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 12px; color: white; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+        }
+        .price-btn:hover, .price-btn.active { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); }
+        .price-btn span:last-child { font-weight: 800; color: var(--accent); }
+
+        .btn-pay { 
+            width: 100%; background: var(--primary); color: white; border: none;
+            padding: 18px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+        .btn-pay:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        @media (max-width: 850px) {
+            .profile-wrapper { grid-template-columns: 1fr; }
+            .vote-card { position: static; margin-top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">TechTalent<span>Awards</span></a>
+            <a href="candidates.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-wrapper">
+            <main>
+                <div class="candidate-header" id="candidate-header"></div>
+                <div class="content-box">
+                    <h2 class="section-title" style="margin-top:0">Biographie</h2>
+                    <p id="bio">Chargement...</p>
+                    <h2 class="section-title">Le Projet</h2>
+                    <p id="project-desc">Chargement...</p>
+                    <div class="video-container">
+                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted)">
+                            <i class="fas fa-play-circle fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <aside>
+                <div class="vote-card">
+                    <div class="vote-count-big" id="total-votes">0</div>
+                    <div class="vote-label">Votes enregistrés</div>
+
+                    <div class="price-options" id="options">
+                        <div class="price-btn active" data-amount="100" data-votes="1">
+                            <span>1 Vote</span> <span>100 FCFA</span>
+                        </div>
+                        <div class="price-btn" data-amount="500" data-votes="6">
+                            <span>6 Votes</span> <span>500 FCFA</span>
+                        </div>
+                        <div class="price-btn" data-amount="1000" data-votes="15">
+                            <span>15 Votes</span> <span>1000 FCFA</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-pay" id="pay-button">Soutenir maintenant</button>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 15px;">Paiement sécurisé via FedaPay</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBm_OKWtWEPTdaR_CdDU68VFTQscuTwTDI",
+            authDomain: "techtalent-awards.firebaseapp.com",
+            projectId: "techtalent-awards",
+            storageBucket: "techtalent-awards.firebasestorage.app",
+            messagingSenderId: "750651688130",
+            appId: "1:750651688130:web:a9baea58892b2b278ba75b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const params = new URLSearchParams(window.location.search);
+        const candidateId = params.get('id');
+
+        let selectedAmount = 100;
+        let selectedVotes = 1;
+
+        async function loadCandidate() {
+            if(!candidateId) return;
+            const docRef = doc(db, "candidates", candidateId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('candidate-header').innerHTML = `
+                    <img src="${data.profileImageUrl}" class="profile-img">
+                    <h1>${data.fullName}</h1>
+                    <span class="badge-specialty">${data.specialty}</span>
+                    <p style="margin-top:15px; color:var(--accent)">📍 Représentant : ${data.country}</p>
+                `;
+                document.getElementById('bio').innerText = data.bio;
+                document.getElementById('project-desc').innerText = data.project;
+                document.getElementById('total-votes').innerText = data.votes || 0;
+            }
+        }
+
+        document.querySelectorAll('.price-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedAmount = parseInt(btn.dataset.amount);
+                selectedVotes = parseInt(btn.dataset.votes);
+            });
+        });
+
+        // LOGIQUE DE PAIEMENT CORRIGÉE
+        document.getElementById('pay-button').addEventListener('click', () => {
+            if (typeof FedaPay === 'undefined') {
+                alert("Erreur: SDK FedaPay non chargé.");
+                return;
+            }
+
+            // Utilisation de checkout.open() qui est la méthode la plus fiable au clic
+            let widget = FedaPay.checkout({
+                public_key: 'pk_live_y7fqKxfU03QR3wqVRvI0k3GY',
+                transaction: {
+                    amount: selectedAmount,
+                    description: `Vote pour ${candidateId}`
+                },
+                onComplete: async (response) => {
+                    const status = response.status;
+                    if (status === 'approved' || status === 'success' || status === 'captured') {
+                        try {
+                            const candidateRef = doc(db, "candidates", candidateId);
+                            await updateDoc(candidateRef, { votes: increment(selectedVotes) });
+                            alert(`✅ Succès ! ${selectedVotes} votes ajoutés.`);
+                            window.location.reload();
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    } else {
+                        alert("Paiement échoué ou annulé.");
+                    }
+                }
+            });
+            
+            widget.open();
+        });
+
+        loadCandidate();
+    </script>
+</body>
+</html>
