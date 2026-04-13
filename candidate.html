@@ -55,14 +55,21 @@
         .vote-count-big { font-size: 3rem; font-weight: 800; color: white; line-height: 1; }
         .vote-label { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
 
-        .price-options { display: grid; gap: 12px; margin-bottom: 25px; }
-        .price-btn { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px; border-radius: 12px; color: white; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+        /* --- VOTE INPUT SECTION --- */
+        .vote-input-section { margin-bottom: 25px; }
+        .input-label { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px; text-align: left; }
+        .input-group { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+        
+        #vote-input { 
+            flex: 1; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03); color: white; font-size: 1rem; font-weight: 600;
         }
-        .price-btn:hover, .price-btn.active { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); }
-        .price-btn span:last-child { font-weight: 800; color: var(--accent); }
+        #vote-input:focus { outline: none; border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+
+        .price-display { 
+            background: rgba(59, 130, 246, 0.1); padding: 12px 15px; border-radius: 8px;
+            border: 1px solid var(--primary); color: var(--accent); font-weight: 800; white-space: nowrap;
+        }
 
         .btn-pay { 
             width: 100%; background: var(--primary); color: white; border: none;
@@ -104,16 +111,11 @@
                     <div class="vote-count-big" id="total-votes">0</div>
                     <div class="vote-label">Votes enregistrés</div>
 
-                    <div class="price-options" id="options">
-                        
-                        <div class="price-btn" data-amount="500" data-votes="5">
-                            <span>5 Votes</span> <span>500 FCFA</span>
-                        </div>
-                        <div class="price-btn" data-amount="1000" data-votes="10">
-                            <span>10 Votes</span> <span>1000 FCFA</span>
-                        </div>
-                        <div class="price-btn" data-amount="2000" data-votes="20">
-                            <span>20 Vote</span> <span>2000 FCFA</span>
+                    <div class="vote-input-section">
+                        <label class="input-label">Nombre de votes</label>
+                        <div class="input-group">
+                            <input type="number" id="vote-input" min="1" value="1" placeholder="Entrez le nombre de votes">
+                            <div class="price-display" id="price-display">100 FCFA</div>
                         </div>
                     </div>
 
@@ -146,9 +148,32 @@
 
     let selectedAmount = 100;
     let selectedVotes = 1;
+    const pricePerVote = 100; // 100 FCFA par vote
 
-    // 1. ÉCOUTE EN TEMPS RÉEL (Plus intelligent que loadCandidate)
-    // Cette fonction met à jour les votes instantanément si quelqu'un d'autre vote
+    // --- GESTION DE L'INPUT VOTES ---
+    const voteInput = document.getElementById('vote-input');
+    const priceDisplay = document.getElementById('price-display');
+
+    voteInput.addEventListener('input', () => {
+        let votes = parseInt(voteInput.value) || 1;
+        
+        // Vérifier que le nombre est positif
+        if (votes < 1) {
+            votes = 1;
+            voteInput.value = 1;
+        }
+        
+        selectedVotes = votes;
+        selectedAmount = votes * pricePerVote;
+        
+        // Mise à jour de l'affichage du prix
+        priceDisplay.innerText = `${selectedAmount} FCFA`;
+        
+        // Réinitialiser FedaPay avec les nouvelles valeurs
+        initFedaPay();
+    });
+
+    // 1. ÉCOUTE EN TEMPS RÉEL
     function watchCandidate() {
         if(!candidateId) return;
         const docRef = doc(db, "candidates", candidateId);
@@ -173,21 +198,7 @@
         initFedaPay();
     }
 
-    // 2. GESTION DES MONTANTS
-    document.querySelectorAll('.price-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.price-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            selectedAmount = parseInt(btn.dataset.amount);
-            selectedVotes = parseInt(btn.dataset.votes);
-            
-            // Mise à jour de FedaPay avec les nouvelles valeurs
-            initFedaPay();
-        });
-    });
-
-    // 3. LOGIQUE DE PAIEMENT & SYNC BASE DE DONNÉES
+    // 2. LOGIQUE DE PAIEMENT & SYNC BASE DE DONNÉES
     function initFedaPay() {
         if (typeof FedaPay === 'undefined') return;
 
@@ -198,47 +209,48 @@
                 description: `Vote pour ${candidateId}`
             },
             onComplete: async function(response) {
-    // 1. Log pour déboguer et voir ce que FedaPay renvoie réellement
-    console.log("Détails de la réponse FedaPay:", response);
+                console.log("Détails de la réponse FedaPay:", response);
 
-    // 2. On récupère le statut soit dans response.status, soit dans response.transaction.status
-    const status = response.status || (response.transaction ? response.transaction.status : null);
-    
-    // 3. Liste élargie des statuts de succès
-    const successStatuses = ['approved', 'success', 'captured', 'captured_manually'];
+                const status = response.status || (response.transaction ? response.transaction.status : null);
+                
+                const successStatuses = ['approved', 'success', 'captured', 'captured_manually'];
 
-    if (successStatuses.includes(status)) {
-        const btn = document.getElementById('pay-button');
-        btn.disabled = true;
-        btn.innerText = "Validation en cours...";
+                if (successStatuses.includes(status)) {
+                    const btn = document.getElementById('pay-button');
+                    btn.disabled = true;
+                    btn.innerText = "Validation en cours...";
 
-        try {
-            // Sécurité : Vérifier si candidateId est bien défini avant l'update
-            if (!candidateId) throw new Error("ID du candidat manquant");
+                    try {
+                        if (!candidateId) throw new Error("ID du candidat manquant");
 
-            const candidateRef = doc(db, "candidates", candidateId);
-            
-            await updateDoc(candidateRef, {
-                votes: increment(selectedVotes)
-            });
+                        const candidateRef = doc(db, "candidates", candidateId);
+                        
+                        await updateDoc(candidateRef, {
+                            votes: increment(selectedVotes)
+                        });
 
-            alert(`✅ Merci ! Vos ${selectedVotes} votes ont été enregistrés.`);
-            
-            btn.disabled = false;
-            btn.innerText = "Soutenir maintenant";
+                        alert(`✅ Merci ! Vos ${selectedVotes} votes ont été enregistrés.`);
+                        
+                        btn.disabled = false;
+                        btn.innerText = "Voter maintenant";
+                        
+                        // Réinitialiser l'input
+                        voteInput.value = 1;
+                        selectedVotes = 1;
+                        selectedAmount = 100;
+                        priceDisplay.innerText = "100 FCFA";
 
-        } catch (e) {
-            console.error("Erreur Firestore:", e);
-            alert("Paiement validé, mais l'ajout des votes a échoué. Contactez le support avec votre preuve de transfert.");
-            btn.disabled = false;
-            btn.innerText = "Soutenir maintenant";
-        }
-    } else {
-        // En cas d'échec, on affiche le statut pour comprendre pourquoi
-        console.warn("Statut de paiement non géré:", status);
-        alert(`Le paiement n'a pas été confirmé (Statut: ${status}). Si vous avez été débité, patientez quelques instants.`);
-    }
-}
+                    } catch (e) {
+                        console.error("Erreur Firestore:", e);
+                        alert("Paiement validé, mais l'ajout des votes a échoué. Contactez le support avec votre preuve de transfert.");
+                        btn.disabled = false;
+                        btn.innerText = "Voter maintenant";
+                    }
+                } else {
+                    console.warn("Statut de paiement non géré:", status);
+                    alert(`Le paiement n'a pas été confirmé (Statut: ${status}). Si vous avez été débité, patientez quelques instants.`);
+                }
+            }
         });
     }
 
